@@ -282,6 +282,42 @@ namespace RecetArreAPI2.Migrations
                     b.ToTable("Categorias");
                 });
 
+            modelBuilder.Entity("RecetArreAPI2.Models.Comentario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Fecha")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<int>("IdReceta")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("IdUsuario")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Puntuacion")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TextoCom")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdReceta");
+
+                    b.HasIndex("IdUsuario");
+
+                    b.ToTable("Comentarios");
+                });
+
             modelBuilder.Entity("RecetArreAPI2.Models.Ingrediente", b =>
                 {
                     b.Property<int>("Id")
@@ -305,7 +341,79 @@ namespace RecetArreAPI2.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Nombre")
+                        .IsUnique();
+
                     b.ToTable("Ingredientes");
+                });
+
+            modelBuilder.Entity("RecetArreAPI2.Models.Rec_Tiem", b =>
+                {
+                    b.Property<int>("IdReceta")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("IdTiempo")
+                        .HasColumnType("integer");
+
+                    b.HasKey("IdReceta", "IdTiempo");
+
+                    b.HasIndex("IdTiempo");
+
+                    b.ToTable("Rec_Tiem", (string)null);
+                });
+
+            modelBuilder.Entity("RecetArreAPI2.Models.Receta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreadoUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("IdUsuario")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Instrucciones")
+                        .HasMaxLength(3000)
+                        .HasColumnType("character varying(3000)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdUsuario");
+
+                    b.ToTable("Recetas");
+                });
+
+            modelBuilder.Entity("RecetArreAPI2.Models.Tiempo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tiempos");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -367,6 +475,65 @@ namespace RecetArreAPI2.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("CreadoPorUsuario");
+                });
+
+            modelBuilder.Entity("RecetArreAPI2.Models.Comentario", b =>
+                {
+                    b.HasOne("RecetArreAPI2.Models.Receta", "Receta")
+                        .WithMany("Comentarios")
+                        .HasForeignKey("IdReceta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RecetArreAPI2.Models.ApplicationUser", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Receta");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("RecetArreAPI2.Models.Rec_Tiem", b =>
+                {
+                    b.HasOne("RecetArreAPI2.Models.Receta", "Receta")
+                        .WithMany("IdTiempo")
+                        .HasForeignKey("IdReceta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RecetArreAPI2.Models.Tiempo", "Tiempo")
+                        .WithMany("RecetasTiempos")
+                        .HasForeignKey("IdTiempo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Receta");
+
+                    b.Navigation("Tiempo");
+                });
+
+            modelBuilder.Entity("RecetArreAPI2.Models.Receta", b =>
+                {
+                    b.HasOne("RecetArreAPI2.Models.ApplicationUser", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("RecetArreAPI2.Models.Receta", b =>
+                {
+                    b.Navigation("Comentarios");
+
+                    b.Navigation("IdTiempo");
+                });
+
+            modelBuilder.Entity("RecetArreAPI2.Models.Tiempo", b =>
+                {
+                    b.Navigation("RecetasTiempos");
                 });
 #pragma warning restore 612, 618
         }

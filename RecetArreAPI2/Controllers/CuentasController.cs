@@ -45,27 +45,19 @@ namespace RecetArreAPI2.Controllers
             var resultado = await userManager.CreateAsync(usuario, credencialesUsuario.Password);
             if (resultado.Succeeded)
             {
-                return await ConstruirToken(credencialesUsuario);
+                return await ConstruirToken(usuario);
             }
             return BadRequest(resultado.Errors);
         }
 
-        private async Task<RespuestaAutenticacion> ConstruirToken(CredencialesUsuario credencialesUsuario)
+        private async Task<RespuestaAutenticacion> ConstruirToken(ApplicationUser usuario)
         {
-            // Primero obtener el usuario
-            var usuario = await userManager.FindByEmailAsync(credencialesUsuario.Email);
-            
-            if (usuario == null)
-            {
-                throw new InvalidOperationException("Usuario no encontrado");
-            }
-
             var usuarioId = usuario.Id;
 
             var claims = new List<Claim>()
             {
-                new Claim("email", credencialesUsuario.Email),
-                new Claim(ClaimTypes.Email, credencialesUsuario.Email),
+                new Claim("email", usuario.Email ?? string.Empty),
+                new Claim(ClaimTypes.Email, usuario.Email ?? string.Empty),
                 new Claim(ClaimTypes.NameIdentifier, usuarioId),
                 new Claim(JwtRegisteredClaimNames.Sub, usuarioId)
             };
@@ -98,27 +90,44 @@ namespace RecetArreAPI2.Controllers
         public async Task<ActionResult<RespuestaAutenticacion>> Renovar()
         {
             var emailClaim = HttpContext.User.Claims.Where(x => x.Type == "email").FirstOrDefault();
-            var credencialesUsuario = new CredencialesUsuario()
+
+            if (emailClaim is null || string.IsNullOrWhiteSpace(emailClaim.Value))
             {
-                Email = emailClaim!.Value
-            };
-            return await ConstruirToken(credencialesUsuario);
+                return Unauthorized(new { mensaje = "Token inválido: no contiene email." });
+            }
+
+            var usuario = await userManager.FindByEmailAsync(emailClaim.Value);
+            if (usuario is null)
+            {
+                return Unauthorized(new { mensaje = "Usuario no encontrado." });
+            }
+
+            return await ConstruirToken(usuario);
         }
 
         [HttpPost("Login")]
         public async Task<ActionResult<RespuestaAutenticacion>> Login(CredencialesUsuario credencialesUsuario)
         {
-            var resultado = await signInManager.PasswordSignInAsync(credencialesUsuario.Email,
-                credencialesUsuario.Password, isPersistent: false, lockoutOnFailure: false);
+            var usuario = await userManager.FindByEmailAsync(credencialesUsuario.Email);
+            if (usuario is null)
+            {
+                return Unauthorized(new { mensaje = "Email o contraseña incorrectos." });
+            }
+
+            var resultado = await signInManager.CheckPasswordSignInAsync(
+                usuario, credencialesUsuario.Password, lockoutOnFailure: false);
 
             if (resultado.Succeeded)
             {
-                return await ConstruirToken(credencialesUsuario);
+                return await ConstruirToken(usuario);
             }
-            else
+
+            if (resultado.IsLockedOut)
             {
-                return BadRequest("Login incorrector");
+                return Unauthorized(new { mensaje = "Usuario bloqueado temporalmente." });
             }
+
+            return Unauthorized(new { mensaje = "Email o contraseña incorrectos." });
         }
     }
 }
