@@ -14,6 +14,7 @@ namespace RecetArreAPI2.Context
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<Ingrediente> Ingredientes { get; set; }
         public DbSet<Recetas> Recetas { get; set; }
+        public DbSet<Comentario> Comentarios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -73,6 +74,35 @@ namespace RecetArreAPI2.Context
             builder.Entity<Recetas>(entity =>
             {
                 entity.HasKey(e => e.Id);
+            });
+
+            // Configuración de Comentario
+            builder.Entity<Comentario>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Contenido)
+                    .IsRequired()
+                    .HasMaxLength(1000);
+
+                entity.Property(e => e.CreadoUtc)
+                    .IsRequired()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.HasOne(e => e.Receta)
+                    .WithMany()
+                    .HasForeignKey(e => e.RecetaId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                entity.HasOne(e => e.Usuario)
+                    .WithMany()
+                    .HasForeignKey(e => e.UsuarioId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired();
+
+                entity.HasIndex(e => e.RecetaId);
+                entity.HasIndex(e => e.UsuarioId);
             });
         }
     }

@@ -1,53 +1,33 @@
-// using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-// namespace RecetArreAPI2.DTOs.Comentarios
-// {
-//     public class ComentariosDto
-//     {
-//         public int Id { get; set; }
+namespace RecetArreAPI2.DTOs.Comentarios
+{
+    public class ComentarioDto
+    {
+        public int Id { get; set; }
+        public string Contenido { get; set; } = default!;
+        public DateTime CreadoUtc { get; set; }
+        public int RecetaId { get; set; }
+        public string UsuarioId { get; set; } = default!;
+    }
 
-//         [Required]
-//         [StringLength(500)]
-//         public string TextoCom { get; set; } = default!;
+    public class ComentarioCreacionDto
+    {
+        [Required]
+        [StringLength(1000, MinimumLength = 1)]
+        public string Contenido { get; set; } = default!;
 
-//         [StringLength(100, MinimumLength = 2)]
-//         public string? IdUsuario { get; set; }
+        [Required]
+        public int RecetaId { get; set; }
+    }
 
-//         [Required]
-//         [Range(1, 5)]
-//         public int Puntuacion { get; set; }
+    public class ComentarioModificacionDto
+    {
+        [Required]
+        [StringLength(1000, MinimumLength = 1)]
+        public string Contenido { get; set; } = default!;
 
-//         public int IdReceta { get; set; }
-
-//         public DateTime Fecha { get; set; } = DateTime.UtcNow;
-//     }
-
-
-//     public class ComentariosCreacionDto
-//     {
-//         [Required]
-//         [StringLength(500)]
-//         public string TextoCom { get; set; } = default!;
-
-//         [Required]
-//         [Range(1, 5)]
-//         public int Puntuacion { get; set; }
-
-//         [Required]
-//         public int IdReceta { get; set; }
-//     }
-
-//     public class ComentariosModificacionDto
-//     {
-//         [Required]
-//         [StringLength(500)]
-//         public string TextoCom { get; set; } = default!;
-
-//         [Required]
-//         [Range(1, 5)]
-//         public int Puntuacion { get; set; }
-
-//         [Required]
-//         public int IdReceta { get; set; }
-//     }
-// }
+        [Required]
+        public int RecetaId { get; set; }
+    }
+}

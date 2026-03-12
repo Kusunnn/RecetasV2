@@ -1,7 +1,7 @@
 using AutoMapper;
 using RecetArreAPI2.DTOs;
 using RecetArreAPI2.DTOs.Categorias;
-// using RecetArreAPI2.DTOs.Comentarios;
+using RecetArreAPI2.DTOs.Comentarios;
 using RecetArreAPI2.DTOs.Ingredientes;
 using RecetArreAPI2.DTOs.Recetas;
 using RecetArreAPI2.Models;
@@ -35,9 +35,9 @@ namespace RecetArreAPI2.Mappings
             CreateMap<RecetaModificacionDto, Recetas>();
 
             // Comentario mappings
-            // CreateMap<Comentario, ComentariosDto>();
-            // CreateMap<ComentariosCreacionDto, Comentario>();
-            // CreateMap<ComentariosModificacionDto, Comentario>();
+            CreateMap<Comentario, ComentarioDto>();
+            CreateMap<ComentarioCreacionDto, Comentario>();
+            CreateMap<ComentarioModificacionDto, Comentario>();
         }
     }
 }
