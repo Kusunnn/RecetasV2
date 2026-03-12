@@ -58,6 +58,7 @@ namespace RecetArreAPI2.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<CategoriaDto>> CreateCategoria(CategoriaCreacionDto categoriaCreacionDto)
         {
+            
             // Validar que el nombre no esté duplicado
             var existe = await context.Categorias
                 .AnyAsync(c => c.Nombre.ToLower() == categoriaCreacionDto.Nombre.ToLower());
@@ -78,8 +79,15 @@ namespace RecetArreAPI2.Controllers
             categoria.CreadoUtc = DateTime.UtcNow;
             categoria.CreadoPorUsuarioId = usuarioId;
 
-            context.Categorias.Add(categoria);
-            await context.SaveChangesAsync();
+            try
+            {
+                context.Categorias.Add(categoria);
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                return BadRequest(new { mensaje = "No se pudo guardar la categoría por un conflicto de datos. Intenta cerrar sesión e iniciar de nuevo." });
+            }
 
             return CreatedAtAction(nameof(GetCategoria), new { id = categoria.Id }, mapper.Map<CategoriaDto>(categoria));
         }

@@ -1,27 +1,40 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecetArreAPI2.Models
 {
-    public class Receta
+    public class Recetas
     {
         public int Id { get; set; }
 
         [Required]
-        [StringLength(100, MinimumLength = 2)]
-        public string Nombre { get; set; } = default!;
+        [StringLength(120, MinimumLength = 3)]
+        public string Titulo { get; set; } = default!;
 
-        [StringLength(3000)]
-        public string? Instrucciones { get; set; }
+        [StringLength(1000)]
+        public string? Descripcion { get; set; }
 
-        [ForeignKey("ApplicationUser")]
-        public string? IdUsuario { get; set; }
+        [Required]
+        public string Instrucciones { get; set; } = default!;
+
+        [Range(0, 24 * 60)]
+        public int TiempoPreparacionMinutos { get; set; }
+
+        [Range(0, 24 * 60)]
+        public int TiempoCoccionMinutos { get; set; }
+
+        [Range(1, 100)]
+        public int Porciones { get; set; } = 1;
+
+        public bool EstaPublicado { get; set; } = true;
 
         public DateTime CreadoUtc { get; set; } = DateTime.UtcNow;
+        public DateTime ModificadoUtc { get; set; } = DateTime.UtcNow;
 
-        public ApplicationUser? Usuario { get; set; }
-        public ICollection<Rec_Tiem> IdTiempo { get; set; } = new List<Rec_Tiem>();
-        public ICollection<Comentario> Comentarios { get; set; } = new List<Comentario>();
-        public ICollection<Rec_Cat> RecetasCategorias { get; set; } = new List<Rec_Cat>();
+        [Required]
+        public string AutorId { get; set; } = default!;
+
+        public ApplicationUser Autor { get; set; } = default!;
+        public ICollection<Categoria> Categorias { get; set; } = new List<Categoria>();
+        public ICollection<Ingrediente> Ingredientes { get; set; } = new List<Ingrediente>();
     }
 }

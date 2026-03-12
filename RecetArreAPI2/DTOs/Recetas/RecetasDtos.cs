@@ -2,46 +2,76 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RecetArreAPI2.DTOs.Recetas
 {
-    public class RecetasDto
+    public class RecetaDto
     {
         public int Id { get; set; }
-
-        [Required]
-        [StringLength(100, MinimumLength = 2)]
-        public string Nombre { get; set; } = default!;
-
-        [StringLength(3000)]
-        public string? Instrucciones { get; set; }
+        public string Titulo { get; set; } = default!;
+        public string? Descripcion { get; set; }
+        public string Instrucciones { get; set; } = default!;
+        public int TiempoPreparacionMinutos { get; set; }
+        public int TiempoCoccionMinutos { get; set; }
+        public int Porciones { get; set; }
+        public bool EstaPublicado { get; set; }
         public DateTime CreadoUtc { get; set; }
-        public string? IdUsuario { get; set; }
-        public List<int> TiemposIds { get; set; } = new();
-        public List<int> CategoriasIds { get; set; } = new();
-
+        public DateTime ModificadoUtc { get; set; }
+        public string AutorId { get; set; } = default!;
+        public List<int> CategoriaIds { get; set; } = new();
+        public List<int> IngredienteIds { get; set; } = new();
     }
 
-    public class RecetasCreacionDto
+    public class RecetaCreacionDto
     {
         [Required]
-        [StringLength(100, MinimumLength = 2)]
-        public string Nombre { get; set; } = default!;
+        [StringLength(120, MinimumLength = 3)]
+        public string Titulo { get; set; } = default!;
 
-        [StringLength(3000)]
-        public string? Instrucciones { get; set; }
+        [StringLength(1000)]
+        public string? Descripcion { get; set; }
 
-        public List<int> TiemposIds { get; set; } = new();
-        public List<int> CategoriasIds { get; set; } = new();
+        [Required]
+        [StringLength(15000)]
+        public string Instrucciones { get; set; } = default!;
+
+        [Range(0, 24 * 60)]
+        public int TiempoPreparacionMinutos { get; set; }
+
+        [Range(0, 24 * 60)]
+        public int TiempoCoccionMinutos { get; set; }
+
+        [Range(1, 100)]
+        public int Porciones { get; set; } = 1;
+
+        public bool EstaPublicado { get; set; } = true;
+
+        public List<int> CategoriaIds { get; set; } = new();
+        public List<int> IngredienteIds { get; set; } = new();
     }
 
-    public class RecetasModificacionDto
+    public class RecetaModificacionDto
     {
         [Required]
-        [StringLength(100, MinimumLength = 2)]
-        public string Nombre { get; set; } = default!;
+        [StringLength(120, MinimumLength = 3)]
+        public string Titulo { get; set; } = default!;
 
-        [StringLength(3000)]
-        public string? Instrucciones { get; set; }
+        [StringLength(1000)]
+        public string? Descripcion { get; set; }
 
-        public List<int> TiemposIds { get; set; } = new();
-        public List<int> CategoriasIds { get; set; } = new();
+        [Required]
+        [StringLength(15000)]
+        public string Instrucciones { get; set; } = default!;
+
+        [Range(0, 24 * 60)]
+        public int TiempoPreparacionMinutos { get; set; }
+
+        [Range(0, 24 * 60)]
+        public int TiempoCoccionMinutos { get; set; }
+
+        [Range(1, 100)]
+        public int Porciones { get; set; } = 1;
+
+        public bool EstaPublicado { get; set; } = true;
+
+        public List<int> CategoriaIds { get; set; } = new();
+        public List<int> IngredienteIds { get; set; } = new();
     }
 }

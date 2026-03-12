@@ -1,7 +1,7 @@
 using AutoMapper;
 using RecetArreAPI2.DTOs;
 using RecetArreAPI2.DTOs.Categorias;
-using RecetArreAPI2.DTOs.Comentarios;
+// using RecetArreAPI2.DTOs.Comentarios;
 using RecetArreAPI2.DTOs.Ingredientes;
 using RecetArreAPI2.DTOs.Recetas;
 using RecetArreAPI2.Models;
@@ -26,24 +26,18 @@ namespace RecetArreAPI2.Mappings
             CreateMap<IngredienteModificacionDto, Ingrediente>();
 
             // Receta mappings
-            CreateMap<Receta, RecetasDto>()
-                .ForMember(dest => dest.TiemposIds,
-                    opt => opt.MapFrom(src => src.IdTiempo.Select(x => x.IdTiempo)))
-                .ForMember(dest => dest.CategoriasIds,
-                    opt => opt.MapFrom(src => src.RecetasCategorias.Select(x => x.IdCategoria)));
+            CreateMap<Recetas, RecetaDto>()
+                .ForMember(dest => dest.CategoriaIds, opt => opt.MapFrom(src => src.Categorias.Select(c => c.Id)))
+                .ForMember(dest => dest.IngredienteIds, opt => opt.MapFrom(src => src.Ingredientes.Select(i => i.Id)));
 
-            CreateMap<RecetasCreacionDto, Receta>()
-                .ForMember(dest => dest.IdTiempo, opt => opt.Ignore())
-                .ForMember(dest => dest.RecetasCategorias, opt => opt.Ignore());
 
-            CreateMap<RecetasModificacionDto, Receta>()
-                .ForMember(dest => dest.IdTiempo, opt => opt.Ignore())
-                .ForMember(dest => dest.RecetasCategorias, opt => opt.Ignore());
+            CreateMap<RecetaCreacionDto, Recetas>();
+            CreateMap<RecetaModificacionDto, Recetas>();
 
             // Comentario mappings
-            CreateMap<Comentario, ComentariosDto>();
-            CreateMap<ComentariosCreacionDto, Comentario>();
-            CreateMap<ComentariosModificacionDto, Comentario>();
+            // CreateMap<Comentario, ComentariosDto>();
+            // CreateMap<ComentariosCreacionDto, Comentario>();
+            // CreateMap<ComentariosModificacionDto, Comentario>();
         }
     }
 }

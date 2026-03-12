@@ -22,6 +22,5 @@ namespace RecetArreAPI2.Models
 
 
         public ApplicationUser? CreadoPorUsuario { get; set; }
-        public ICollection<Rec_Cat> RecetasCategorias { get; set; } = new List<Rec_Cat>();
     }
 }

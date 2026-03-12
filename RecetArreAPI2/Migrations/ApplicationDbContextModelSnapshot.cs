@@ -272,6 +272,9 @@ namespace RecetArreAPI2.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<int?>("RecetasId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreadoPorUsuarioId");
@@ -279,43 +282,9 @@ namespace RecetArreAPI2.Migrations
                     b.HasIndex("Nombre")
                         .IsUnique();
 
+                    b.HasIndex("RecetasId");
+
                     b.ToTable("Categorias");
-                });
-
-            modelBuilder.Entity("RecetArreAPI2.Models.Comentario", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Fecha")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<int>("IdReceta")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("IdUsuario")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Puntuacion")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TextoCom")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdReceta");
-
-                    b.HasIndex("IdUsuario");
-
-                    b.ToTable("Comentarios");
                 });
 
             modelBuilder.Entity("RecetArreAPI2.Models.Ingrediente", b =>
@@ -335,6 +304,9 @@ namespace RecetArreAPI2.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<int?>("RecetasId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("UnidadMed")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
@@ -344,25 +316,12 @@ namespace RecetArreAPI2.Migrations
                     b.HasIndex("Nombre")
                         .IsUnique();
 
+                    b.HasIndex("RecetasId");
+
                     b.ToTable("Ingredientes");
                 });
 
-            modelBuilder.Entity("RecetArreAPI2.Models.Rec_Tiem", b =>
-                {
-                    b.Property<int>("IdReceta")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("IdTiempo")
-                        .HasColumnType("integer");
-
-                    b.HasKey("IdReceta", "IdTiempo");
-
-                    b.HasIndex("IdTiempo");
-
-                    b.ToTable("Rec_Tiem", (string)null);
-                });
-
-            modelBuilder.Entity("RecetArreAPI2.Models.Receta", b =>
+            modelBuilder.Entity("RecetArreAPI2.Models.Recetas", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -370,50 +329,46 @@ namespace RecetArreAPI2.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreadoUtc")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("IdUsuario")
+                    b.Property<string>("AutorId")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Instrucciones")
-                        .HasMaxLength(3000)
-                        .HasColumnType("character varying(3000)");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdUsuario");
-
-                    b.ToTable("Recetas");
-                });
-
-            modelBuilder.Entity("RecetArreAPI2.Models.Tiempo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<DateTime>("CreadoUtc")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Descripcion")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
-                    b.Property<string>("Nombre")
+                    b.Property<bool>("EstaPublicado")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Instrucciones")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ModificadoUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Porciones")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TiempoCoccionMinutos")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TiempoPreparacionMinutos")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tiempos");
+                    b.HasIndex("AutorId");
+
+                    b.ToTable("Recetas");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -474,66 +429,36 @@ namespace RecetArreAPI2.Migrations
                         .HasForeignKey("CreadoPorUsuarioId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("RecetArreAPI2.Models.Recetas", null)
+                        .WithMany("Categorias")
+                        .HasForeignKey("RecetasId");
+
                     b.Navigation("CreadoPorUsuario");
                 });
 
-            modelBuilder.Entity("RecetArreAPI2.Models.Comentario", b =>
+            modelBuilder.Entity("RecetArreAPI2.Models.Ingrediente", b =>
                 {
-                    b.HasOne("RecetArreAPI2.Models.Receta", "Receta")
-                        .WithMany("Comentarios")
-                        .HasForeignKey("IdReceta")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("RecetArreAPI2.Models.Recetas", null)
+                        .WithMany("Ingredientes")
+                        .HasForeignKey("RecetasId");
+                });
 
-                    b.HasOne("RecetArreAPI2.Models.ApplicationUser", "Usuario")
+            modelBuilder.Entity("RecetArreAPI2.Models.Recetas", b =>
+                {
+                    b.HasOne("RecetArreAPI2.Models.ApplicationUser", "Autor")
                         .WithMany()
-                        .HasForeignKey("IdUsuario")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Receta");
-
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("RecetArreAPI2.Models.Rec_Tiem", b =>
-                {
-                    b.HasOne("RecetArreAPI2.Models.Receta", "Receta")
-                        .WithMany("IdTiempo")
-                        .HasForeignKey("IdReceta")
+                        .HasForeignKey("AutorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RecetArreAPI2.Models.Tiempo", "Tiempo")
-                        .WithMany("RecetasTiempos")
-                        .HasForeignKey("IdTiempo")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Receta");
-
-                    b.Navigation("Tiempo");
+                    b.Navigation("Autor");
                 });
 
-            modelBuilder.Entity("RecetArreAPI2.Models.Receta", b =>
+            modelBuilder.Entity("RecetArreAPI2.Models.Recetas", b =>
                 {
-                    b.HasOne("RecetArreAPI2.Models.ApplicationUser", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("IdUsuario")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.Navigation("Categorias");
 
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("RecetArreAPI2.Models.Receta", b =>
-                {
-                    b.Navigation("Comentarios");
-
-                    b.Navigation("IdTiempo");
-                });
-
-            modelBuilder.Entity("RecetArreAPI2.Models.Tiempo", b =>
-                {
-                    b.Navigation("RecetasTiempos");
+                    b.Navigation("Ingredientes");
                 });
 #pragma warning restore 612, 618
         }

@@ -14,7 +14,7 @@ namespace RecetArreAPI2.Controllers
     [ApiController]
     //www.localhost.com/api/cuentas
     [Route("api/[controller]")]
-    public class CuentasController : Controller
+    public class CuentasController : ControllerBase
     {
         // Dar de alta un usuario
         private readonly UserManager<ApplicationUser> userManager;

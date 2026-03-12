@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v10.0": {
-      "RecetArreApi2/1.0.0": {
+      "RecetArreAPI2/1.0.0": {
         "dependencies": {
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "10.0.3",
@@ -20,7 +20,7 @@
           "Scalar.AspNetCore": "2.12.41"
         },
         "runtime": {
-          "RecetArreApi2.dll": {}
+          "RecetArreAPI2.dll": {}
         }
       },
       "AutoMapper/12.0.1": {
@@ -881,7 +881,7 @@
     }
   },
   "libraries": {
-    "RecetArreApi2/1.0.0": {
+    "RecetArreAPI2/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
