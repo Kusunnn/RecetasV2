@@ -1,7 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecetArreAPI2.Context;
@@ -16,16 +15,13 @@ namespace RecetArreAPI2.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
-        private readonly UserManager<ApplicationUser> userManager;
 
         public IngredientesController(
             ApplicationDbContext context,
-            IMapper mapper,
-            UserManager<ApplicationUser> userManager)
+            IMapper mapper)
         {
             this.context = context;
             this.mapper = mapper;
-            this.userManager = userManager;
         }
 
         // GET: api/ingredientes
@@ -64,13 +60,6 @@ namespace RecetArreAPI2.Controllers
             if (existe)
             {
                 return BadRequest(new { mensaje = "Ya existe ese ingrediente" });
-            }
-
-            // Obtener el usuario autenticado
-            var usuarioId = userManager.GetUserId(User);
-            if (string.IsNullOrEmpty(usuarioId))
-            {
-                return Unauthorized(new { mensaje = "Usuario no autenticado" });
             }
 
             var ingrediente = mapper.Map<Ingrediente>(ingredienteCreacionDto);

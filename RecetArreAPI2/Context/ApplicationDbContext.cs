@@ -71,9 +71,53 @@ namespace RecetArreAPI2.Context
             });
 
             // Configuración de Recetas
-            builder.Entity<Recetas>(entity =>
+           builder.Entity<Recetas>(entity =>
             {
                 entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Titulo)
+                    .IsRequired()
+                    .HasMaxLength(120);
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(1000)
+                    .IsRequired(false);
+
+                entity.Property(e => e.Instrucciones)
+                    .IsRequired()
+                    .HasMaxLength(15000);
+
+                entity.Property(e => e.Porciones)
+                    .HasDefaultValue(1);
+
+                entity.Property(e => e.EstaPublicado)
+                    .HasDefaultValue(true);
+
+                entity.Property(e => e.CreadoUtc)
+                    .IsRequired()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                entity.Property(e => e.ModificadoUtc)
+                    .IsRequired()
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                // entity.HasOne(e => e.Autor)
+                //     .WithMany(u => u.RecetasPublicadas)
+                //     .HasForeignKey(e => e.AutorId)
+                //     .OnDelete(DeleteBehavior.Restrict)
+                //     .IsRequired();
+
+                entity.HasMany(e => e.Categorias)
+                    .WithMany(c => c.Recetas)
+                    .UsingEntity(j => j.ToTable("RecetaCategorias"));
+
+                entity.HasMany(e => e.Ingredientes)
+                    .WithMany(i => i.Recetas)
+                    .UsingEntity(j => j.ToTable("RecetaIngredientes"));
+
+                entity.HasIndex(e => e.AutorId);
+                entity.HasIndex(e => e.CreadoUtc);
+                entity.HasIndex(e => e.EstaPublicado);
             });
 
             // Configuración de Comentario

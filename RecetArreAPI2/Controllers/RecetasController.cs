@@ -82,10 +82,21 @@ namespace RecetArreAPI2.Controllers
                 return Unauthorized(new { mensaje = "Usuario no autenticado" });
             }
 
+            var (categorias, ingredientes, error) = await ObtenerRelacionesReceta(
+                recetaCreacionDto.CategoriaIds,
+                recetaCreacionDto.IngredienteIds);
+
+            if (error is not null)
+            {
+                return error;
+            }
+
             var receta = mapper.Map<Recetas>(recetaCreacionDto);
             receta.AutorId = usuarioId;
             receta.CreadoUtc = DateTime.UtcNow;
             receta.ModificadoUtc = DateTime.UtcNow;
+            receta.Categorias = categorias;
+            receta.Ingredientes = ingredientes;
 
             context.Recetas.Add(receta);
             await context.SaveChangesAsync();
@@ -113,8 +124,19 @@ namespace RecetArreAPI2.Controllers
                 return NotFound(new { mensaje = "Receta no encontrada" });
             }
 
+            var (categorias, ingredientes, error) = await ObtenerRelacionesReceta(
+                recetaModificacionDto.CategoriaIds,
+                recetaModificacionDto.IngredienteIds);
+
+            if (error is not null)
+            {
+                return error;
+            }
+
             mapper.Map(recetaModificacionDto, receta);
             receta.ModificadoUtc = DateTime.UtcNow;
+            receta.Categorias = categorias;
+            receta.Ingredientes = ingredientes;
 
             context.Recetas.Update(receta);
             await context.SaveChangesAsync();
@@ -137,6 +159,40 @@ namespace RecetArreAPI2.Controllers
             await context.SaveChangesAsync();
 
             return Ok(new { mensaje = "Receta eliminada exitosamente" });
+        }
+
+        private async Task<(List<Categoria> categorias, List<Ingrediente> ingredientes, BadRequestObjectResult? error)> ObtenerRelacionesReceta(
+            List<int> categoriaIds,
+            List<int> ingredienteIds)
+        {
+            var categoriaIdsDistintos = (categoriaIds ?? new List<int>()).Distinct().ToList();
+            var ingredienteIdsDistintos = (ingredienteIds ?? new List<int>()).Distinct().ToList();
+
+            var categorias = await context.Categorias
+                .Where(c => categoriaIdsDistintos.Contains(c.Id))
+                .ToListAsync();
+
+            var ingredientes = await context.Ingredientes
+                .Where(i => ingredienteIdsDistintos.Contains(i.Id))
+                .ToListAsync();
+
+            if (categorias.Count != categoriaIdsDistintos.Count)
+            {
+                return (
+                    new List<Categoria>(),
+                    new List<Ingrediente>(),
+                    BadRequest(new { mensaje = "Una o más categorías no existen." }));
+            }
+
+            if (ingredientes.Count != ingredienteIdsDistintos.Count)
+            {
+                return (
+                    new List<Categoria>(),
+                    new List<Ingrediente>(),
+                    BadRequest(new { mensaje = "Uno o más ingredientes no existen." }));
+            }
+
+            return (categorias, ingredientes, null);
         }
     }
 }

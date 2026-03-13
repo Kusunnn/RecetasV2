@@ -16,7 +16,6 @@ namespace RecetArreAPI2.Models
         
         [StringLength(500)]
         public string? Descripcion { get; set; }
-
-
+        public ICollection<Recetas> Recetas { get; set; } = new List<Recetas>();
     }
 }
