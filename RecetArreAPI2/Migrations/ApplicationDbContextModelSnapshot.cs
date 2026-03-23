@@ -339,6 +339,8 @@ namespace RecetArreAPI2.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreadoUtc");
+
                     b.HasIndex("RecetaId");
 
                     b.HasIndex("UsuarioId");
@@ -532,13 +534,13 @@ namespace RecetArreAPI2.Migrations
             modelBuilder.Entity("RecetArreAPI2.Models.Comentario", b =>
                 {
                     b.HasOne("RecetArreAPI2.Models.Recetas", "Receta")
-                        .WithMany()
+                        .WithMany("Comentarios")
                         .HasForeignKey("RecetaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("RecetArreAPI2.Models.ApplicationUser", "Usuario")
-                        .WithMany()
+                        .WithMany("Comentarios")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -551,12 +553,24 @@ namespace RecetArreAPI2.Migrations
             modelBuilder.Entity("RecetArreAPI2.Models.Recetas", b =>
                 {
                     b.HasOne("RecetArreAPI2.Models.ApplicationUser", "Autor")
-                        .WithMany()
+                        .WithMany("RecetasPublicadas")
                         .HasForeignKey("AutorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Autor");
+                });
+
+            modelBuilder.Entity("RecetArreAPI2.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Comentarios");
+
+                    b.Navigation("RecetasPublicadas");
+                });
+
+            modelBuilder.Entity("RecetArreAPI2.Models.Recetas", b =>
+                {
+                    b.Navigation("Comentarios");
                 });
 #pragma warning restore 612, 618
         }

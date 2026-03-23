@@ -101,11 +101,11 @@ namespace RecetArreAPI2.Context
                     .IsRequired()
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                // entity.HasOne(e => e.Autor)
-                //     .WithMany(u => u.RecetasPublicadas)
-                //     .HasForeignKey(e => e.AutorId)
-                //     .OnDelete(DeleteBehavior.Restrict)
-                //     .IsRequired();
+                entity.HasOne(e => e.Autor)
+                    .WithMany(u => u.RecetasPublicadas)
+                    .HasForeignKey(e => e.AutorId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired();
 
                 entity.HasMany(e => e.Categorias)
                     .WithMany(c => c.Recetas)
@@ -134,17 +134,18 @@ namespace RecetArreAPI2.Context
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 entity.HasOne(e => e.Receta)
-                    .WithMany()
+                    .WithMany(r => r.Comentarios)
                     .HasForeignKey(e => e.RecetaId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
                 entity.HasOne(e => e.Usuario)
-                    .WithMany()
+                    .WithMany(u => u.Comentarios)
                     .HasForeignKey(e => e.UsuarioId)
                     .OnDelete(DeleteBehavior.Restrict)
                     .IsRequired();
 
+                entity.HasIndex(e => e.CreadoUtc);
                 entity.HasIndex(e => e.RecetaId);
                 entity.HasIndex(e => e.UsuarioId);
             });

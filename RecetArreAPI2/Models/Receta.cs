@@ -14,6 +14,7 @@ namespace RecetArreAPI2.Models
         public string? Descripcion { get; set; }
 
         [Required]
+        [StringLength(15000)]
         public string Instrucciones { get; set; } = default!;
 
         [Range(0, 24 * 60)]
@@ -36,5 +37,6 @@ namespace RecetArreAPI2.Models
         public ApplicationUser Autor { get; set; } = default!;
         public ICollection<Categoria> Categorias { get; set; } = new List<Categoria>();
         public ICollection<Ingrediente> Ingredientes { get; set; } = new List<Ingrediente>();
+        public ICollection<Comentario> Comentarios { get; set; } = new List<Comentario>();
     }
 }

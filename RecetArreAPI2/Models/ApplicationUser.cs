@@ -27,5 +27,8 @@ namespace RecetArreAPI2.Models
 
         public DateTime CreadoUtc { get; set; } = DateTime.UtcNow;
         public DateTime ModificadoUtc { get; set; } = DateTime.UtcNow;
+
+        public ICollection<Recetas> RecetasPublicadas { get; set; } = new List<Recetas>();
+        public ICollection<Comentario> Comentarios { get; set; } = new List<Comentario>();
     }
 }

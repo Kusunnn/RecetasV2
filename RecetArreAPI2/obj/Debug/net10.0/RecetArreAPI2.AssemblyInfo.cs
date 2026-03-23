@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RecetArreAPI2")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e3ec6759cf0dc053cb07d8201361b6113acb5c19")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9796cbdd4b69b3f20aaa52c37b5da5e630bbb9d8")]
 [assembly: System.Reflection.AssemblyProductAttribute("RecetArreAPI2")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RecetArreAPI2")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
