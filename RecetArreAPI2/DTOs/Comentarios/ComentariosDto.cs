@@ -9,6 +9,7 @@ namespace RecetArreAPI2.DTOs.Comentarios
         public DateTime CreadoUtc { get; set; }
         public int RecetaId { get; set; }
         public string UsuarioId { get; set; } = default!;
+        public string UsuarioNombre { get; set; } = default!;
     }
 
     public class ComentarioCreacionDto

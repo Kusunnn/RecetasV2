@@ -15,11 +15,18 @@ namespace RecetArreAPI2.Context
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false)
                 .AddJsonFile($"appsettings.{environment}.json", optional: true)
+                .AddJsonFile("appsettings.Local.json", optional: true)
+                .AddJsonFile($"appsettings.{environment}.local.json", optional: true)
                 .AddEnvironmentVariables()
                 .Build();
 
-            var connectionString = configuration.GetConnectionString("DefaultConnection")
-                ?? throw new InvalidOperationException("No se encontró la cadena de conexión 'DefaultConnection'.");
+            var connectionString = configuration["ConnectionStrings:DefaultConnection"];
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException(
+                    "No se encontró la cadena de conexión 'ConnectionStrings:DefaultConnection'. Configúrala en appsettings.Local.json o mediante variables de entorno.");
+            }
 
             optionsBuilder.UseNpgsql(connectionString);
 

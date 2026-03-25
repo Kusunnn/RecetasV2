@@ -35,7 +35,9 @@ namespace RecetArreAPI2.Mappings
             CreateMap<RecetaModificacionDto, Recetas>();
 
             // Comentario mappings
-            CreateMap<Comentario, ComentarioDto>();
+            CreateMap<Comentario, ComentarioDto>()
+                .ForMember(dest => dest.UsuarioNombre,
+                    opt => opt.MapFrom(src => src.Usuario.UserName ?? src.Usuario.Email ?? src.UsuarioId));
             CreateMap<ComentarioCreacionDto, Comentario>();
             CreateMap<ComentarioModificacionDto, Comentario>();
         }

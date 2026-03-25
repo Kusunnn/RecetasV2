@@ -33,6 +33,26 @@ namespace RecetArreAPI2.Controllers
         public async Task<ActionResult<IEnumerable<ComentarioDto>>> GetComentarios()
         {
             var comentarios = await context.Comentarios
+                .Include(c => c.Usuario)
+                .OrderByDescending(c => c.CreadoUtc)
+                .ToListAsync();
+
+            return Ok(mapper.Map<List<ComentarioDto>>(comentarios));
+        }
+
+        // GET: api/comentarios/receta/{recetaId}
+        [HttpGet("receta/{recetaId:int}")]
+        public async Task<ActionResult<IEnumerable<ComentarioDto>>> GetComentariosPorReceta(int recetaId)
+        {
+            var existeReceta = await context.Recetas.AnyAsync(r => r.Id == recetaId);
+            if (!existeReceta)
+            {
+                return NotFound(new { mensaje = "Receta no encontrada" });
+            }
+
+            var comentarios = await context.Comentarios
+                .Include(c => c.Usuario)
+                .Where(c => c.RecetaId == recetaId)
                 .OrderByDescending(c => c.CreadoUtc)
                 .ToListAsync();
 
@@ -43,7 +63,9 @@ namespace RecetArreAPI2.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ComentarioDto>> GetComentario(int id)
         {
-            var comentario = await context.Comentarios.FirstOrDefaultAsync(c => c.Id == id);
+            var comentario = await context.Comentarios
+                .Include(c => c.Usuario)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             if (comentario == null)
             {
@@ -77,7 +99,11 @@ namespace RecetArreAPI2.Controllers
             context.Comentarios.Add(comentario);
             await context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetComentario), new { id = comentario.Id }, mapper.Map<ComentarioDto>(comentario));
+            var comentarioCreado = await context.Comentarios
+                .Include(c => c.Usuario)
+                .FirstAsync(c => c.Id == comentario.Id);
+
+            return CreatedAtAction(nameof(GetComentario), new { id = comentario.Id }, mapper.Map<ComentarioDto>(comentarioCreado));
         }
 
         // PUT: api/comentarios/{id}
@@ -100,6 +126,8 @@ namespace RecetArreAPI2.Controllers
             mapper.Map(comentarioModificacionDto, comentario);
             context.Comentarios.Update(comentario);
             await context.SaveChangesAsync();
+
+            await context.Entry(comentario).Reference(c => c.Usuario).LoadAsync();
 
             return Ok(new { mensaje = "Comentario actualizado exitosamente", data = mapper.Map<ComentarioDto>(comentario) });
         }
