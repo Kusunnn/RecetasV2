@@ -12,6 +12,8 @@
 # .NET build output
 **/bin/
 **/obj/
+**/bin\\*/
+**/obj\\*/
 TestResults/
 
 # Logs and local databases
